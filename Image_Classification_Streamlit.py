@@ -1,17 +1,17 @@
 import streamlit as st
-from transformers import AutoModelForImageClassification, AutoImageProcessor
+from transformers import ViTForImageClassification, ViTFeatureExtractor
 from PIL import Image
 import torch
 
-# Load pre-trained model and image processor
+# Load pre-trained model and feature extractor
 @st.cache_resource
 def load_model():
-    model_name = "timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k"
-    model = AutoModelForImageClassification.from_pretrained(model_name)
-    processor = AutoImageProcessor.from_pretrained(model_name)
-    return model, processor
+    model_name = "google/vit-base-patch16-224"
+    model = ViTForImageClassification.from_pretrained(model_name)
+    feature_extractor = ViTFeatureExtractor.from_pretrained(model_name)
+    return model, feature_extractor
 
-model, processor = load_model()
+model, feature_extractor = load_model()
 
 # Streamlit App
 st.title("Image Classification with Hugging Face")
@@ -26,7 +26,7 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image", use_column_width=True)
     
     # Preprocess image
-    inputs = processor(images=image, return_tensors="pt")
+    inputs = feature_extractor(images=image, return_tensors="pt")
     
     # Classify image
     st.write("Classifying...")
